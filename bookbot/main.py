@@ -1,33 +1,46 @@
-path_to_file = "books/frankenstein.txt"
+def main():
+    book_path = './books/frankeinstein.txt'
+    file_contents = get_book_text(book_path)
+    word_count = get_word_count(file_contents)
+    char_count = get_char_dict(file_contents)
+    print_report(word_count, char_count)
 
-def get_word_count(file_contents):
-    words = file_contents.split()
+def get_book_text(path):
+    with open(path) as f:
+        return f.read()
+
+def get_word_count(text):
+    words = text.split()
     return len(words)
 
-def get_all_chars(file_contents):
+def get_char_dict(text):
     chars = {}
 
-    for char in file_contents:
-        char_to_lower = char.lower()
+    for char in text:
+        sanitized_char = char.lower()
 
-        if char_to_lower.isalpha():
-            if (char_to_lower not in chars):
-                chars[char_to_lower] = 1
-            else:
-                chars[char_to_lower] += 1
+        if not sanitized_char.isalpha():
+            continue
+
+        if sanitized_char not in chars:
+            chars[sanitized_char] = 1
+            continue
+
+        chars[sanitized_char] += 1
 
     return chars
 
-with open(path_to_file, "r") as file:
-    file_contents = file.read()
-    word_count = get_word_count(file_contents)
-    all_characters = get_all_chars(file_contents)
+def print_report(word_count, char_dict):
+    chars_list = list(char_dict.items())
+    chars_list.sort(key=(lambda x : x[1]), reverse=True)
 
-    print(f"--- Begin report of {path_to_file} ---")
-    print(f"{word_count} words found in the document\n")
-    
-    for char in all_characters:
-        print(f"The '{char}' character was found {all_characters[char]} times")
-    
-    print("--- End report ---")
-    
+    print('--- Begin report of books/frankenstein.txt ---')
+    print(f"{word_count} words found in the document")
+    print('')
+
+    for char in chars_list:
+        print(f"The '{char[0]}' character was found {char[1]} times")
+
+    print('--- End report ---')
+
+main()
